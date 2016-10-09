@@ -84,7 +84,7 @@ public class DictDivider {
             pieces=(int)maxNum;
         }
 
-        long index = maxNum/pieces*n - 1;
+        long index = maxNum*n/pieces - 1;
         return DictUtil.calNthDecimal(sample,index,digit);
 
     }

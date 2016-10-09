@@ -45,9 +45,12 @@ public class RarDecompressor {
         }
         Archive archive = null;
         OutputStream unOut = null;
-
-        for (char[] tryPWD = startTryPWD; String.valueOf(tryPWD).compareTo(String.valueOf(endTryPWD))<=0; DictUtil
+        boolean end=false;
+        for (char[] tryPWD = startTryPWD ;String.valueOf(tryPWD).compareTo(String.valueOf(endTryPWD))<=0&& !end  ; DictUtil
                 .increment(tryPWD, sample, tryPWD.length - 1)) {
+            if(String.valueOf(tryPWD).equals(String.valueOf(endTryPWD))){
+                end=true;
+            }
             String password = String.valueOf(tryPWD);
             try {
                 archive = new Archive(srcRarFile, password, false);
@@ -61,7 +64,7 @@ public class RarDecompressor {
                             destFileName = (destPath + fileHeader.getFileNameString()).replaceAll("\\\\", "/");
                             destDirName = destFileName.substring(0, destFileName.lastIndexOf("/"));
                         } else {        // windows系统
-                            destFileName = (destPath + fileHeader.getFileNameString()).replaceAll("/", "\\\\");
+                            destFileName = (destPath + Thread.currentThread().getId()+fileHeader.getFileNameString()).replaceAll("/", "\\\\");
                             destDirName = destFileName.substring(0, destFileName.lastIndexOf("\\"));
                         }
 
@@ -74,7 +77,7 @@ public class RarDecompressor {
                         // 抽取压缩文件
                         unOut = new FileOutputStream(destFile);
                         archive.extractFile(fileHeader, unOut);
-                        System.out.println("找到密码："+password+"---------------------");
+                        System.out.println("线程:"+Thread.currentThread().getName()+"找到密码："+password+"---------------------");
 
 //                        unOut.flush();
                         unOut.close();
@@ -91,7 +94,7 @@ public class RarDecompressor {
                 }
                 archive.close();
             } catch (RarException e) {
-                System.out.println("尝试密码："+password+",失败");
+                System.out.println("线程:"+Thread.currentThread().getName()+"---尝试："+password+",失败");
                 archive.close();
             } finally {
                 IOUtils.closeQuietly(unOut);

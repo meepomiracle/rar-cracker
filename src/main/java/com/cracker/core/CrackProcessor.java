@@ -41,8 +41,8 @@ public class CrackProcessor {
         executorService = Executors.newFixedThreadPool(maxThreadNum);
         crackerParam = new CrackerParam(maxPWDLen,maxThreadNum,true,false,false,false,false);
         sample = DictUtil.generateSample(crackerParam);
-        srcFile = new File("D:/file/1.rar");
-        destPath = "D:/file/1";
+        srcFile = new File("D:/1.rar");
+        destPath = "D:/1";
         dictDivider = new DictDivider(crackerParam);
 
         
@@ -52,6 +52,7 @@ public class CrackProcessor {
         boolean nextLen = true;
 
         for (int len = 1; len <=maxPWDLen &&nextLen; len++) {
+            System.out.println("开始分配线程");
             for(int threadIndex = 1;threadIndex<=maxThreadNum;threadIndex++){
                 char[] startTryPWD,endTryPWD;
                 if(threadIndex==1){
@@ -68,9 +69,10 @@ public class CrackProcessor {
                 CrackTask task = new CrackTask(rarDecompressor);
                 executorService.execute(task);
             }
-
+            System.out.println("分配线程结束");
             while(true){
                 if(results.size()==maxThreadNum){
+                    System.out.println("所有线程执行完毕");
                     for (int i = 0; i <results.size() ; i++) {
                         if(results.get(i)!=null){
                             nextLen = false;
@@ -78,6 +80,12 @@ public class CrackProcessor {
                         }
                     }
                     break;
+                }
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
 
@@ -105,10 +113,10 @@ public class CrackProcessor {
                 if(result!=null){
                     System.out.println("线程:"+Thread.currentThread().getName()+"找到密码:"+result);
                 }else{
-                    System.out.println("线程:"+Thread.currentThread().getName()+"没有找到密码");
+                    System.out.println("线程:"+Thread.currentThread().getName()+"没有找到");
                 }
                 results.add(result);
-
+                System.out.println("结果加入链表,当前链表长度:"+results.size());
             } catch (IOException e) {
                 e.printStackTrace();
             }

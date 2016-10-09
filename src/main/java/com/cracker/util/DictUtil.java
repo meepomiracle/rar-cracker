@@ -20,6 +20,14 @@ public class DictUtil {
     public static void increment(char[] temp, String sample, int incrementIndex) {
         char start = sample.charAt(0);
         char end = sample.charAt(sample.length()-1);
+        String last = "";
+        for (int i = 0; i <temp.length ; i++) {
+            last+=end;
+        }
+        //temp已经达到最大值，不再进位
+        if(String.valueOf(temp).equals(last)){
+            return;
+        }
         //当前位需要进位，当前位赋值为start
         if (temp[incrementIndex] == end) {
             temp[incrementIndex] = start;
